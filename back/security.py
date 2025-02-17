@@ -13,7 +13,7 @@ ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/users/login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 # 해시된 비밀번호 일치 확인
 def verify_password(plain_password, hashed_password):
