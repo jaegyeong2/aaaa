@@ -33,9 +33,9 @@ def create_user(user: schema.UserCreate, db: Session = Depends(get_db)):
         db.refresh(db_user)
         print("회원가입 성공:", db_user.id, db_user.username)
         return db_user
-    except Exception as e:
-        db.rollback()  # 롤백 추가
-        print("회원가입 오류:", str(e))
+    except HTTPException:
+        raise
+    except Exception:
         raise HTTPException(status_code=500, detail="회원가입 중 오류가 발생했습니다")
     
 # 로그인
