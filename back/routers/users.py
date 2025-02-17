@@ -31,7 +31,6 @@ def create_user(user: schema.UserCreate, db: Session = Depends(get_db)):
         db.add(db_user)
         db.commit()
         db.refresh(db_user)
-        print("회원가입 성공:", db_user.id, db_user.username)
         return db_user
     except HTTPException:
         raise
