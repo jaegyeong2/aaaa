@@ -6,55 +6,108 @@ import security
 from model import User
 from fastapi.security import OAuth2PasswordRequestForm
 from datetime import timedelta
+import traceback
+import logging
+from sqlalchemy.exc import SQLAlchemyError
 
 router = APIRouter(
     prefix="/users",
     tags=["users"]
 )
 
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
+
 @router.post("/register", response_model=schema.User)
-def create_user(user: schema.UserCreate, db: Session = Depends(get_db)):
-    try:
-        # 디버깅을 위한 로그
-        print(f"받은 데이터: {user.dict()}")
-        
-        # 사용자 중복 체크
-        if db.query(User).filter(User.username == user.username).first():
-            raise HTTPException(status_code=400, detail="이름 중복")
-        
-        if db.query(User).filter(User.email == user.email).first():
-            raise HTTPException(status_code=400, detail="이메일 중복")
-        
-        # 새 사용자 객체 생성
-        db_user = User(
-            username=user.username,
-            email=user.email,
-            password_hash = security.get_password_hash(user.password)
-        )
-        
-        print("사용자 객체 생성됨")
-        
-        # 데이터베이스에 추가
-        db.add(db_user)
-        print("DB에 추가됨")
-        
-        # 커밋 시도
-        try:
-            db.commit()
-            print("커밋 성공")
-        except Exception as e:
-            db.rollback()
-            print(f"커밋 실패: {str(e)}")
-            raise
-        
-        db.refresh(db_user)
-        print("새로고침 완료")
-        
-        return db_user
+def create_user(
+    user: schema.UserCreate,
+    db: Session = Depends(get_db)
+):
+    logger.debug(f"Received registration request with data: {user.dict(exclude={'password'})}")
     
+    try:
+        # 데이터베이스 연결 테스트
+        try:
+            db.execute("SELECT 1")
+            logger.debug("Database connection successful")
+        except Exception as e:
+            logger.error(f"Database connection failed: {str(e)}")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Database connection failed"
+            )
+
+        # 사용자 중복 체크
+        existing_username = db.query(User).filter(User.username == user.username).first()
+        if existing_username:
+            logger.warning(f"Duplicate username attempted: {user.username}")
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Username already registered"
+            )
+
+        existing_email = db.query(User).filter(User.email == user.email).first()
+        if existing_email:
+            logger.warning(f"Duplicate email attempted: {user.email}")
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Email already registered"
+            )
+
+        # 비밀번호 해싱
+        try:
+            password_hash = security.get_password_hash(user.password)
+            logger.debug("Password hashing successful")
+        except Exception as e:
+            logger.error(f"Password hashing failed: {str(e)}")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Password processing failed"
+            )
+
+        # 새 사용자 생성
+        try:
+            db_user = User(
+                username=user.username,
+                email=user.email,
+                password_hash=password_hash
+            )
+            logger.debug("User object created successfully")
+        except Exception as e:
+            logger.error(f"User object creation failed: {str(e)}")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="User creation failed"
+            )
+
+        try:
+            db.add(db_user)
+            logger.debug("User added to session")
+            db.commit()
+            logger.debug("Database commit successful")
+            db.refresh(db_user)
+            logger.debug("User refresh successful")
+            return db_user
+        except SQLAlchemyError as e:
+            db.rollback()
+            logger.error(f"Database error: {str(e)}")
+            logger.error(f"Full traceback: {traceback.format_exc()}")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Database error: {str(e)}"
+            )
+            
+    except HTTPException as he:
+        raise he
     except Exception as e:
-        print(f"에러 발생: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
+        logger.error(f"Unexpected error: {str(e)}")
+        logger.error(f"Full traceback: {traceback.format_exc()}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"An unexpected error occurred: {str(e)}"
+        )
+    finally:
+        db.close()
 # 로그인
 @router.post("/users/login", response_model=schema.Token)
 async def login_for_access_token(
