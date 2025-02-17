@@ -12,31 +12,49 @@ router = APIRouter(
     tags=["users"]
 )
 
-# 회원가입
 @router.post("/register", response_model=schema.User)
 def create_user(user: schema.UserCreate, db: Session = Depends(get_db)):
     try:
+        # 디버깅을 위한 로그
+        print(f"받은 데이터: {user.dict()}")
+        
+        # 사용자 중복 체크
         if db.query(User).filter(User.username == user.username).first():
             raise HTTPException(status_code=400, detail="이름 중복")
-
+        
         if db.query(User).filter(User.email == user.email).first():
             raise HTTPException(status_code=400, detail="이메일 중복")
-
+        
+        # 새 사용자 객체 생성
         db_user = User(
             username=user.username,
             email=user.email,
             password_hash = security.get_password_hash(user.password)
         )
-
+        
+        print("사용자 객체 생성됨")
+        
+        # 데이터베이스에 추가
         db.add(db_user)
-        db.commit()
+        print("DB에 추가됨")
+        
+        # 커밋 시도
+        try:
+            db.commit()
+            print("커밋 성공")
+        except Exception as e:
+            db.rollback()
+            print(f"커밋 실패: {str(e)}")
+            raise
+        
         db.refresh(db_user)
+        print("새로고침 완료")
+        
         return db_user
-    except HTTPException:
-        raise
-    except Exception:
-        raise HTTPException(status_code=500, detail="회원가입 중 오류가 발생했습니다")
     
+    except Exception as e:
+        print(f"에러 발생: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
 # 로그인
 @router.post("/users/login", response_model=schema.Token)
 async def login_for_access_token(
