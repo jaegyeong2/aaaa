@@ -40,7 +40,7 @@ def create_user(user: schema.UserCreate, db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail="회원가입 중 오류가 발생했습니다")
     
 # 로그인
-@router.post("login", response_model=schema.Token)
+@router.post("/users/login", response_model=schema.Token)
 async def login_for_access_token(
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db)
