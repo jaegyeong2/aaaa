@@ -28,7 +28,6 @@ class PostCreate(PostBase):
 class Post(PostBase):
     id: int
     user_id: int
-    username: str
     view_count: int
     created_at: datetime
     updated_at: Optional[datetime]
