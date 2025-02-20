@@ -20,7 +20,6 @@ class User(UserBase):
 class PostBase(BaseModel):
     title: str
     content: str
-    username: str
 
 # PostCreate와 Post도 PostBase 상속받음
 class PostCreate(PostBase):
@@ -29,6 +28,7 @@ class PostCreate(PostBase):
 class Post(PostBase):
     id: int
     user_id: int
+    username: str
     view_count: int
     created_at: datetime
     updated_at: Optional[datetime]
