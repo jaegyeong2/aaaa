@@ -5,6 +5,7 @@ from database import get_db
 import schema
 import security
 from model import Post, User
+from sqlalchemy.orm import joinedload
 
 router = APIRouter(
     prefix="/posts",
@@ -74,10 +75,11 @@ def delete_post(
 # 게시물 목록 조회
 @router.get("/", response_model=List[schema.Post])
 def get_posts(db: Session = Depends(get_db)):
-    db_posts = db.query(Post).join(User).all()  
+    db_posts = db.query(Post).options(joinedload(Post.user)).all()  # Post와 User 모델을 조인
+
     if not db_posts:
         raise HTTPException(status_code=404, detail="게시물이 없습니다")
-    
+
     return db_posts
 
 # 게시물 id로 특정 게시물 조회(조회수도 같이 조회) 

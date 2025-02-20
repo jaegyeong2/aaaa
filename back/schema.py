@@ -20,6 +20,7 @@ class User(UserBase):
 class PostBase(BaseModel):
     title: str
     content: str
+    username: str
 
 # PostCreate와 Post도 PostBase 상속받음
 class PostCreate(PostBase):
