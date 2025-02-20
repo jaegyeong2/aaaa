@@ -74,7 +74,7 @@ def delete_post(
 # 게시물 목록 조회
 @router.get("/", response_model=List[schema.Post])
 def get_posts(db: Session = Depends(get_db)):
-    db_posts = db.query(Post).all()
+    db_posts = db.query(Post).join(User).all()  
     if not db_posts:
         raise HTTPException(status_code=404, detail="게시물이 없습니다")
     
