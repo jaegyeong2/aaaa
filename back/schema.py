@@ -31,6 +31,7 @@ class Post(PostBase):
     view_count: int
     created_at: datetime
     updated_at: Optional[datetime]
+    author: Optional[User] = None  # User 모델을 포함시킴
     
     class Config:
         from_attributes = True
