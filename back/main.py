@@ -8,6 +8,10 @@ app.include_router(users.router)
 app.include_router(posts.router)
 app.include_router(comments.router)
 
+@app.get("/")
+def read_root():
+    return {"message": "Welcome to the API!"}
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
