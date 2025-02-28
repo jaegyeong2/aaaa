@@ -14,4 +14,8 @@ export default defineConfig({
       crypto: 'crypto-browserify',  // crypto-browserify로 대체
     },
   },
+  server: {
+    host: '0.0.0.0', // 외부 네트워크에서도 접근 가능하도록 설정
+    port: 5173, // 원하는 포트 설정
+  },
 })
