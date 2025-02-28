@@ -138,7 +138,7 @@ def read_post(post_id: int, db: Session = Depends(get_db)):
     return post_dict
 
 # 내 게시물 조회
-@router.get("/my-posts", response_model=List[PostWithUsername])
+@router.get("/Myposts", response_model=List[PostWithUsername])
 def get_my_posts(
     db: Session = Depends(get_db),
     current_user: User = Depends(security.get_current_user)
