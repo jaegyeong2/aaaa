@@ -5,14 +5,12 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   define: {
-    crypto: 'crypto-browserify',  // crypto 폴리필 설정
+    'process.env': {},  // process.env 초기화
+    crypto: 'crypto-browserify',  // crypto-browserify로 설정
   },
   resolve: {
     alias: {
-      crypto: 'crypto-browserify',  // crypto-browserify 모듈로 대체
+      crypto: 'crypto-browserify',  // crypto-browserify로 대체
     },
-  },
-  optimizeDeps: {
-    include: ['crypto-browserify']
   },
 })
