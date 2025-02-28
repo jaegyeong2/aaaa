@@ -12,4 +12,7 @@ export default defineConfig({
       crypto: 'crypto-browserify',  // crypto-browserify 모듈로 대체
     },
   },
+  optimizeDeps: {
+    include: ['crypto-browserify']
+  },
 })
