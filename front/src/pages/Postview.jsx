@@ -30,20 +30,6 @@ const MetaInfo = styled.div`
 
 const PostInfo = styled.div``;
 
-const ButtonGroup = styled.div`
-  display: flex;
-  gap: 10px;
-`;
-
-const Button = styled.button`
-  padding: 5px 10px;
-  background-color: ${props => (props.delete ? "#dc3545" : "#007bff")};
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-`;
-
 const Content = styled.p`
   font-size: 18px;
   line-height: 1.6;
@@ -51,8 +37,9 @@ const Content = styled.p`
 
 const PostView = () => {
   const { postId } = useParams();
-  const numericPostId = parseInt(postId, 10); 
   const [post, setPost] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -62,41 +49,30 @@ const PostView = () => {
       navigate("/board");
       return;
     }
-  
+    
     const fetchPost = async () => {
+      setLoading(true);
       try {
+        // URL 형식 수정 - 프로토콜이 누락되었던 부분 수정
         const response = await axios.get(
-          `http:15.165.159.148:8000/posts/Read/${parseInt(postId, 10)}`
+          `http://15.165.159.148:8000/posts/Read/${parseInt(postId, 10)}`
         );
         setPost(response.data);
+        setError(null);
       } catch (error) {
-        console.error("게시글 불러오기 오류:", error.response?.data);
-        alert("게시글을 불러오는 중 오류가 발생했습니다.");
-        navigate("/board");
+        console.error("게시글 불러오기 오류:", error.response?.data || error.message);
+        setError("게시글을 불러오는 중 오류가 발생했습니다.");
+      } finally {
+        setLoading(false);
       }
     };
+    
     fetchPost();
   }, [postId, navigate]);
 
-  const handleDelete = async () => {
-    if (!window.confirm("정말 삭제하시겠습니까?")) return;
-
-    try {
-      await axios.delete(`http://15.165.159.148:8000/posts/Delete`, {
-        data: { post_id: numericPostId }, 
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
-      });
-      alert("게시물이 삭제되었습니다.");
-      navigate("/board");
-    } catch (error) {
-      console.error("게시물 삭제 오류:", error);
-      alert("게시물을 삭제하는 중 오류가 발생했습니다.");
-    }
-  };
-
-  if (!post) return <Container>게시글을 불러오는 중...</Container>;
+  if (loading) return <Container>게시글을 불러오는 중...</Container>;
+  if (error) return <Container>오류: {error}</Container>;
+  if (!post) return <Container>게시글을 찾을 수 없습니다.</Container>;
 
   return (
     <Container>
@@ -108,10 +84,6 @@ const PostView = () => {
         </PostInfo>
       </MetaInfo>
       <Content>{post.content}</Content>
-      <ButtonGroup>
-        <Button onClick={() => navigate(`/Post?edit=${post.id}`)}>수정</Button>
-        <Button delete onClick={handleDelete}>삭제</Button>
-      </ButtonGroup>
     </Container>
   );
 };
