@@ -16,7 +16,7 @@ export default defineConfig({
   },
   server: {
     host: '0.0.0.0', // 외부 네트워크에서도 접근 가능하도록 설정
-    port: 80, // 원하는 포트 설정
+    port: 5173, // 원하는 포트 설정
   },
   optimizeDeps: {
     include: ['browserify'] // 필요한 의존성을 명시적으로 추가
