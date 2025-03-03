@@ -16,7 +16,7 @@ function App() {
       <Route path="/register" element={<Register/>}/>
       <Route path="/board" element={<Board/>}/>
       <Route path="/post" element={<Post/>}/>
-      <Route path="/postview" element={<Postview/>} />
+      <Route path="/postview/:postId" element={<Postview/>} />
       <Route path="/myposts" element={<MyPosts/>}/>
       <Route path="/editpost" element={<EditPost/>}/>
     </Routes>
