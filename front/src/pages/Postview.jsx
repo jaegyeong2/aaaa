@@ -51,7 +51,9 @@ const Content = styled.p`
 
 const PostView = () => {
   const { postId } = useParams();
+  console.log("postId from useParams:", postId, "Type:", typeof postId);
   const numericPostId = parseInt(postId, 10); 
+  console.log("Converted numericPostId:", numericPostId, "Type:", typeof numericPostId);
   const [post, setPost] = useState(null);
   const navigate = useNavigate();
 
@@ -59,7 +61,7 @@ const PostView = () => {
     const fetchPost = async () => {
       try {
         const response = await axios.get(
-          `http://15.165.159.148:8000/posts/Read/${numericPostId}`
+          `http://15.165.159.148:8000/posts/Read/${postId}`
         );
         setPost(response.data);
       } catch (error) {
