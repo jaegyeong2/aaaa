@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import axios from "axios";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from "react-router-dom";
 
 const Container = styled.div`
   max-width: 800px;
@@ -14,24 +14,27 @@ const Title = styled.h1`
   margin-bottom: 20px;
 `;
 
-const Input = styled.input`
-  width: 100%;
-  padding: 10px;
+const MetaInfo = styled.div`
+  color: #555;
+  font-size: 14px;
   margin-bottom: 20px;
-  border: 1px solid #dee2e6;
-  border-radius: 4px;
-  font-size: 16px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #dee2e6;
+  display: flex;
+  justify-content: space-between;
 `;
 
-const TextArea = styled.textarea`
-  width: 100%;
-  height: 400px;
-  padding: 10px;
-  margin-bottom: 20px;
-  border: 1px solid #dee2e6;
-  border-radius: 4px;
+const PostInfo = styled.div`
+  display: flex;
+  gap: 15px;
+`;
+
+const Content = styled.div`
   font-size: 16px;
-  resize: vertical;
+  line-height: 1.6;
+  min-height: 300px;
+  padding: 10px 0;
+  margin-bottom: 20px;
 `;
 
 const ButtonGroup = styled.div`
@@ -56,53 +59,61 @@ const Button = styled.button`
   `}
 `;
 
-const Post = () => {
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
+const PostView = () => {
+  const { postId } = useParams();
+  const [post, setPost] = useState(null);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  const handleSubmit = async () => {
-    try {
-
-      const userId = JSON.parse(atob(localStorage.getItem('access_token').split('.')[1])).sub;
-
-      await axios.post("http://15.165.159.148:8000/posts/Create", {
-        title,
-        content,
-        user_id: userId 
-      }, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`
-        }
-      });
-
-      alert('게시글 작성 성공');
-      navigate('/board');
-    } catch (error) {
-      console.error(error);
-      alert('게시글 작성에 실패했습니다.');
+  useEffect(() => {
+    // 게시글 ID가 유효한지 확인
+    if (!postId || isNaN(parseInt(postId, 10))) {
+      console.error("유효하지 않은 게시글 ID:", postId);
+      navigate("/board");
+      return;
     }
+    
+    const fetchPost = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get(
+          `http://15.165.159.148:8000/posts/Read/${parseInt(postId, 10)}`
+        );
+        setPost(response.data);
+      } catch (error) {
+        console.error("게시글 불러오기 오류:", error.response?.data || error.message);
+        alert("게시글을 불러오는 중 오류가 발생했습니다.");
+        navigate("/board");
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchPost();
+  }, [postId, navigate]);
+
+  const handleGoBack = () => {
+    navigate("/board");
   };
+
+  if (loading) return <Container><div>게시글을 불러오는 중...</div></Container>;
+  if (!post) return <Container><div>게시글을 찾을 수 없습니다.</div></Container>;
 
   return (
     <Container>
-      <Title>글쓰기</Title>
-      <Input
-        placeholder="제목을 입력하세요"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-      />
-      <TextArea
-        placeholder="내용을 입력하세요"
-        value={content}
-        onChange={(e) => setContent(e.target.value)}
-      />
+      <Title>{post.title}</Title>
+      <MetaInfo>
+        <PostInfo>
+          <div>작성자: {post.username}</div>
+          <div>작성일: {new Date(post.created_at).toLocaleDateString()}</div>
+        </PostInfo>
+      </MetaInfo>
+      <Content>{post.content}</Content>
       <ButtonGroup>
-        <Button onClick={() => navigate('/board')}>취소</Button>
-        <Button primary onClick={handleSubmit}>등록</Button>
+        <Button onClick={handleGoBack}>목록</Button>
       </ButtonGroup>
     </Container>
   );
 };
 
-export default Post;
+export default PostView;
