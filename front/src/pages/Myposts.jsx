@@ -77,13 +77,10 @@ const MyPost = () => {
         return;
       }
       
-      // 토큰에서 user_id 추출
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      const userId = payload.sub;
-      
       setLoading(true);
+      // "/Myposts" 엔드포인트 사용
       const response = await axios.get(
-        `http://15.165.159.148:8000/posts/user/${userId}`,
+        "http://15.165.159.148:8000/posts/Myposts",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -95,7 +92,11 @@ const MyPost = () => {
       setMyPosts(response.data);
     } catch (error) {
       console.error("내 게시물 불러오기 오류:", error.response?.data || error.message);
-      alert("게시물을 불러오는 중 오류가 발생했습니다.");
+      if (error.response?.status === 404) {
+        setMyPosts([]);
+      } else {
+        alert("게시물을 불러오는 중 오류가 발생했습니다.");
+      }
     } finally {
       setLoading(false);
     }
@@ -119,7 +120,7 @@ const MyPost = () => {
       
       alert("게시물이 삭제되었습니다.");
       // 삭제 후 목록 갱신
-      setMyPosts(myPosts.filter((post) => post.id !== postId));
+      fetchMyPosts();
     } catch (error) {
       console.error("게시물 삭제 오류:", error.response?.data || error.message);
       alert("게시물을 삭제하는 중 오류가 발생했습니다.");
@@ -148,7 +149,6 @@ const MyPost = () => {
             <tr>
               <Th>번호</Th>
               <Th>제목</Th>
-              <Th>조회수</Th>
               <Th>작성일</Th>
               <Th>관리</Th>
             </tr>
@@ -164,7 +164,6 @@ const MyPost = () => {
                   >
                     {post.title}
                   </Td>
-                  <Td>{post.view_count || 0}</Td>
                   <Td>{new Date(post.created_at).toLocaleDateString()}</Td>
                   <Td>
                     <EditButton onClick={() => handleEdit(post.id)}>수정</EditButton>
@@ -174,7 +173,7 @@ const MyPost = () => {
               ))
             ) : (
               <tr>
-                <Td colSpan="5" style={{ textAlign: "center" }}>
+                <Td colSpan="4" style={{ textAlign: "center" }}>
                   작성한 게시물이 없습니다.
                 </Td>
               </tr>
