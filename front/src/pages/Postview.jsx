@@ -51,7 +51,7 @@ const Content = styled.p`
 
 const PostView = () => {
   const { postId } = useParams();
-  const numericPostId = parseInt(postId, 10); // ✅ postId를 숫자로 변환
+  const numericPostId = parseInt(postId, 10); 
   const [post, setPost] = useState(null);
   const navigate = useNavigate();
 
@@ -77,7 +77,7 @@ const PostView = () => {
 
     try {
       await axios.delete(`http://15.165.159.148:8000/posts/Delete`, {
-        data: { post_id: numericPostId }, // ✅ body로 post_id 전달
+        data: { post_id: numericPostId }, 
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
