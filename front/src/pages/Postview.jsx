@@ -51,22 +51,22 @@ const Content = styled.p`
 
 const PostView = () => {
   const { postId } = useParams();
-  const numericPostId = parseInt(postId, 10); 
+  const numericPostId = parseInt(postId, 10);
   const [post, setPost] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     // 게시글 ID가 유효한지 확인
-    if (!postId || isNaN(parseInt(postId, 10))) {
+    if (!numericPostId || isNaN(numericPostId)) {
       console.error("유효하지 않은 게시글 ID:", postId);
       navigate("/board");
       return;
     }
-  
+
     const fetchPost = async () => {
       try {
         const response = await axios.get(
-          `http:15.165.159.148:8000/posts/Read/${parseInt(postId, 10)}`
+          `http://15.165.159.148:8000/posts/Read/${numericPostId}`
         );
         setPost(response.data);
       } catch (error) {
@@ -76,14 +76,14 @@ const PostView = () => {
       }
     };
     fetchPost();
-  }, [postId, navigate]);
+  }, [numericPostId, navigate]);
 
   const handleDelete = async () => {
     if (!window.confirm("정말 삭제하시겠습니까?")) return;
 
     try {
       await axios.delete(`http://15.165.159.148:8000/posts/Delete`, {
-        data: { post_id: numericPostId }, 
+        data: { post_id: numericPostId },
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
@@ -109,7 +109,7 @@ const PostView = () => {
       </MetaInfo>
       <Content>{post.content}</Content>
       <ButtonGroup>
-        <Button onClick={() => navigate(`/Post?edit=${post.id}`)}>수정</Button>
+        <Button onClick={() => navigate(`/posts/edit/${post.id}`)}>수정</Button>
         <Button delete onClick={handleDelete}>삭제</Button>
       </ButtonGroup>
     </Container>
