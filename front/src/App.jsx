@@ -20,7 +20,7 @@ function App() {
       <Route path="/postview" element={<Postview/>} />
       <Route path="/myposts" element={<MyPosts/>}/>
       <Route path="/editpost" element={<EditPost/>}/>
-      <Route path="/postview/:postId" element={<PostView />} />
+      <Route path="/postview/:postId" element={<Postview />} />
     </Routes>
     </BrowserRouter>
   );
