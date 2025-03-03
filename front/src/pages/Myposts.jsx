@@ -63,21 +63,41 @@ const DeleteButton = styled(Button)`
 
 const MyPost = () => {
   const [myPosts, setMyPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const userId = localStorage.getItem("user_id");
 
   const fetchMyPosts = async () => {
     try {
-      const response = await axios.get(`http://15.165.159.148:8000/posts/Read/${userId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
-      });
-      console.log("내 게시물 데이터:", response.data); // 데이터 확인
+      // 로컬 스토리지에서 토큰 가져오기
+      const token = localStorage.getItem("access_token");
+      
+      if (!token) {
+        alert("로그인이 필요합니다.");
+        navigate("/login");
+        return;
+      }
+      
+      // 토큰에서 user_id 추출
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const userId = payload.sub;
+      
+      setLoading(true);
+      const response = await axios.get(
+        `http://15.165.159.148:8000/posts/user/${userId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      
+      console.log("내 게시물 데이터:", response.data);
       setMyPosts(response.data);
     } catch (error) {
-      console.error("내 게시물 불러오기 오류:", error);
+      console.error("내 게시물 불러오기 오류:", error.response?.data || error.message);
       alert("게시물을 불러오는 중 오류가 발생했습니다.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -96,12 +116,18 @@ const MyPost = () => {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       });
+      
       alert("게시물이 삭제되었습니다.");
+      // 삭제 후 목록 갱신
       setMyPosts(myPosts.filter((post) => post.id !== postId));
     } catch (error) {
-      console.error("게시물 삭제 오류:", error);
+      console.error("게시물 삭제 오류:", error.response?.data || error.message);
       alert("게시물을 삭제하는 중 오류가 발생했습니다.");
     }
+  };
+
+  const handleViewPost = (postId) => {
+    navigate(`/post/${postId}`);
   };
 
   useEffect(() => {
@@ -113,37 +139,49 @@ const MyPost = () => {
       <Header>
         <Title>내 게시물</Title>
       </Header>
-      <Table>
-        <thead>
-          <tr>
-            <Th>번호</Th>
-            <Th>제목</Th>
-            <Th>조회수</Th>
-            <Th>작성일</Th>
-            <Th>관리</Th>
-          </tr>
-        </thead>
-        <tbody>
-          {myPosts.length > 0 ? (
-            myPosts.map((post) => (
-              <PostRow key={post.id}>
-                <Td>{post.id}</Td>
-                <Td>{post.title}</Td>
-                <Td>{post.view_count}</Td>
-                <Td>{new Date(post.created_at).toLocaleDateString()}</Td>
-                <Td>
-                  <EditButton onClick={() => handleEdit(post.id)}>수정</EditButton>
-                  <DeleteButton onClick={() => handleDelete(post.id)}>삭제</DeleteButton>
-                </Td>
-              </PostRow>
-            ))
-          ) : (
+      
+      {loading ? (
+        <div>게시물을 불러오는 중...</div>
+      ) : (
+        <Table>
+          <thead>
             <tr>
-              <Td colSpan="5" style={{ textAlign: "center" }}>작성한 게시물이 없습니다.</Td>
+              <Th>번호</Th>
+              <Th>제목</Th>
+              <Th>조회수</Th>
+              <Th>작성일</Th>
+              <Th>관리</Th>
             </tr>
-          )}
-        </tbody>
-      </Table>
+          </thead>
+          <tbody>
+            {myPosts.length > 0 ? (
+              myPosts.map((post) => (
+                <PostRow key={post.id}>
+                  <Td>{post.id}</Td>
+                  <Td 
+                    onClick={() => handleViewPost(post.id)} 
+                    style={{ cursor: 'pointer' }}
+                  >
+                    {post.title}
+                  </Td>
+                  <Td>{post.view_count || 0}</Td>
+                  <Td>{new Date(post.created_at).toLocaleDateString()}</Td>
+                  <Td>
+                    <EditButton onClick={() => handleEdit(post.id)}>수정</EditButton>
+                    <DeleteButton onClick={() => handleDelete(post.id)}>삭제</DeleteButton>
+                  </Td>
+                </PostRow>
+              ))
+            ) : (
+              <tr>
+                <Td colSpan="5" style={{ textAlign: "center" }}>
+                  작성한 게시물이 없습니다.
+                </Td>
+              </tr>
+            )}
+          </tbody>
+        </Table>
+      )}
     </Container>
   );
 };
