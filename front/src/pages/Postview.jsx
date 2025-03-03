@@ -59,7 +59,7 @@ const PostView = () => {
     const fetchPost = async () => {
       try {
         const response = await axios.get(
-          `http://15.165.159.148:8000/posts/Read/${postId}`
+          `http://15.165.159.148:8000/posts/Read/${numericPostId}`
         );
         setPost(response.data);
       } catch (error) {
