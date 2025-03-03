@@ -8,6 +8,7 @@ import MyPosts from "./pages/Myposts";
 import EditPost from "./pages/EditPost";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
+
 function App() {
   return (
     <BrowserRouter>
@@ -16,9 +17,10 @@ function App() {
       <Route path="/register" element={<Register/>}/>
       <Route path="/board" element={<Board/>}/>
       <Route path="/post" element={<Post/>}/>
-      <Route path="/postview/:postId" element={<Postview/>} />
+      <Route path="/postview" element={<Postview/>} />
       <Route path="/myposts" element={<MyPosts/>}/>
       <Route path="/editpost" element={<EditPost/>}/>
+      <Route path="/postview/:postId" element={<PostView />} />
     </Routes>
     </BrowserRouter>
   );

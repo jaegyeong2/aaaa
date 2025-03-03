@@ -110,7 +110,7 @@ const Board = () => {
         </thead>
         <tbody>
           {posts.map((post) => (
-            <PostRow key={post.id} onClick={() => navigate(`/postview${postId}`)}>
+            <PostRow key={post.id} onClick={() => navigate(`/postview${post.id}`)}>
               <Td>{post.id}</Td>
               <Td>{post.title}</Td>
               <Td>{post.username}</Td>

@@ -56,10 +56,17 @@ const PostView = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // 게시글 ID가 유효한지 확인
+    if (!postId || isNaN(parseInt(postId, 10))) {
+      console.error("유효하지 않은 게시글 ID:", postId);
+      navigate("/board");
+      return;
+    }
+  
     const fetchPost = async () => {
       try {
         const response = await axios.get(
-          `http://15.165.159.148:8000/posts/Read/${postId}`
+          `http:15.165.159.148:8000/posts/Read/${parseInt(postId, 10)}`
         );
         setPost(response.data);
       } catch (error) {
@@ -68,9 +75,8 @@ const PostView = () => {
         navigate("/board");
       }
     };
-
     fetchPost();
-  }, [numericPostId, navigate]);
+  }, [postId, navigate]);
 
   const handleDelete = async () => {
     if (!window.confirm("정말 삭제하시겠습니까?")) return;
