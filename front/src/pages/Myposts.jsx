@@ -110,10 +110,9 @@ const MyPost = () => {
     if (!window.confirm("정말 삭제하시겠습니까?")) return;
 
     try {
-      await axios.delete(`http://15.165.159.148:8000/posts/Delete`, {
-        data: { post_id: postId },
+      await axios.delete("http://15.165.159.148:8000/posts/Delete", {
+        params: { post_id: postId },
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       });
@@ -123,7 +122,7 @@ const MyPost = () => {
       fetchMyPosts();
     } catch (error) {
       console.error("게시물 삭제 오류:", error.response?.data || error.message);
-      alert("게시물을 삭제하는 중 오류가 발생했습니다.");
+      alert(`게시물을 삭제하는 중 오류가 발생했습니다: ${error.response?.data?.detail || error.message}`);
     }
   };
 
