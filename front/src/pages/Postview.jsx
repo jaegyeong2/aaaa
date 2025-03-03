@@ -51,9 +51,7 @@ const Content = styled.p`
 
 const PostView = () => {
   const { postId } = useParams();
-  console.log("postId from useParams:", postId, "Type:", typeof postId);
   const numericPostId = parseInt(postId, 10); 
-  console.log("Converted numericPostId:", numericPostId, "Type:", typeof numericPostId);
   const [post, setPost] = useState(null);
   const navigate = useNavigate();
 
