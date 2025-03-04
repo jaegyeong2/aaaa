@@ -85,41 +85,32 @@ const EditPost = () => {
     }
   };    
 
-  const handleSubmit = async () => {     
-    if (!title.trim()) {
-      alert('제목을 입력해주세요.');
-      return;
-    }
-
-    if (!content.trim()) {
-      alert('내용을 입력해주세요.');
-      return;
-    }
-
+  const handleSubmit = async () => {
     try {
-      setIsLoading(true);
-      await axios.put("http://15.165.159.148:8000/posts/Update", {         
-        post_id: parseInt(postId),
-        title,         
-        content       
-      }, {         
-        headers: {           
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`         
-        }       
-      });              
-      alert('게시글 수정 성공');       
-      navigate(`/postview/${postId}`);     
-    } catch (error) {       
-      console.error(error);       
-      if (error.response?.status === 403) {         
-        alert('게시글을 수정할 권한이 없습니다.');       
-      } else {         
-        alert('게시글 수정에 실패했습니다.');       
-      }     
-    } finally {
-      setIsLoading(false);
+      await axios.put(`http://15.165.159.148:8000/posts/Update`, 
+        {
+          title,
+          content
+        }, 
+        {
+          params: { post_id: postId }, 
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('access_token')}`
+          }
+        }
+      );
+      
+      alert('게시글 수정 성공');
+      navigate(`/postview/${postId}`);
+    } catch (error) {
+      console.error(error);
+      if (error.response?.status === 403) {
+        alert('게시글을 수정할 권한이 없습니다.');
+      } else {
+        alert('게시글 수정에 실패했습니다.');
+      }
     }
-  };    
+  };
 
   if (isLoading) {
     return <Container>로딩 중...</Container>;
@@ -139,7 +130,7 @@ const EditPost = () => {
         onChange={(e) => setContent(e.target.value)}       
       />       
       <ButtonGroup>         
-        <Button onClick={() => navigate(`/postview/${postId}`)}>취소</Button>         
+        <Button onClick={() => navigate(`/myposts`)}>취소</Button>         
         <Button primary onClick={handleSubmit} disabled={isLoading}>
           {isLoading ? '수정 중...' : '수정'}
         </Button>       
