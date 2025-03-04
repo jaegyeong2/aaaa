@@ -87,14 +87,16 @@ const EditPost = () => {
 
   const handleSubmit = async () => {
     try {
-      await axios.put(`http://15.165.159.148:8000/posts/Update`, 
+      const response = await axios.put(
+        `http://15.165.159.148:8000/posts/Update`, 
         {
-          title,
-          content
+          post_id: parseInt(postId),  // 스키마에 정의되지 않았지만, 쿼리 파라미터로 보낼 수 있음
+          title,   // PostBase에서 정의된 필드
+          content  // PostBase에서 정의된 필드
         }, 
         {
-          params: { post_id: postId }, 
           headers: {
+            'Content-Type': 'application/json',
             Authorization: `Bearer ${localStorage.getItem('access_token')}`
           }
         }
@@ -103,7 +105,8 @@ const EditPost = () => {
       alert('게시글 수정 성공');
       navigate(`/postview/${postId}`);
     } catch (error) {
-      console.error(error);
+      console.error('Update error:', error.response?.data || error);
+      
       if (error.response?.status === 403) {
         alert('게시글을 수정할 권한이 없습니다.');
       } else {
@@ -111,7 +114,6 @@ const EditPost = () => {
       }
     }
   };
-
   if (isLoading) {
     return <Container>로딩 중...</Container>;
   }
