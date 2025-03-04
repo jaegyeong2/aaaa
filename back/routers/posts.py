@@ -40,6 +40,9 @@ def update_post(
     db: Session = Depends(get_db),
     current_user: User = Depends(security.get_current_user)
 ):
+    print(f"Received post_id: {post_id}")
+    print(f"Received post_update: {post_update}")
+    print(f"Current user: {current_user.id}")
     db_post = db.query(Post).filter(Post.id == post_id).first()
     if db_post is None:
         raise HTTPException(status_code=404, detail="게시물을 찾을 수 없습니다")
