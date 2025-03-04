@@ -45,7 +45,7 @@ const Button = styled.button`
   border-radius: 4px;   
   font-size: 16px;   
   cursor: pointer;      
-  background-color: ${props => props.primary ? 'black' : 'white'};     
+  background-color: ${props => props.primary ? 'black' : 'white'};
   color: ${props => props.primary ? 'white' : 'black'};
   border: ${props => props.primary ? 'none' : '1px solid black'};
 `;  
@@ -128,7 +128,7 @@ const EditPost = () => {
       />       
       <ButtonGroup>         
         <Button onClick={() => navigate(`/myposts`)}>취소</Button>         
-        <Button primary onClick={handleSubmit} disabled={isLoading}>
+        <Button primary={true} onClick={handleSubmit} disabled={isLoading}>
           {isLoading ? '수정 중...' : '수정'}
         </Button>       
       </ButtonGroup>     
