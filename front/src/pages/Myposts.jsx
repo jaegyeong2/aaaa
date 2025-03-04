@@ -68,7 +68,6 @@ const MyPost = () => {
 
   const fetchMyPosts = async () => {
     try {
-      // 로컬 스토리지에서 토큰 가져오기
       const token = localStorage.getItem("access_token");
       
       if (!token) {
@@ -78,7 +77,6 @@ const MyPost = () => {
       }
       
       setLoading(true);
-      // "/Myposts" 엔드포인트 사용
       const response = await axios.get(
         "http://15.165.159.148:8000/posts/Myposts",
         {
@@ -118,7 +116,6 @@ const MyPost = () => {
       });
       
       alert("게시물이 삭제되었습니다.");
-      // 삭제 후 목록 갱신
       fetchMyPosts();
     } catch (error) {
       console.error("게시물 삭제 오류:", error.response?.data || error.message);

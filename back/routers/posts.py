@@ -53,7 +53,6 @@ def update_post(
     db.commit()
     db.refresh(db_post)
     
-    # 사용자 정보 포함
     result = db_post.__dict__.copy()
     result["username"] = current_user.username
     
@@ -73,7 +72,6 @@ def delete_post(
     if db_post.user_id != current_user.id:
         raise HTTPException(status_code=403, detail="게시물을 삭제할 권한이 없습니다")
     
-    # 삭제 전에 게시물 정보와 사용자 정보 저장
     result = db_post.__dict__.copy()
     result["username"] = current_user.username
     
@@ -82,23 +80,21 @@ def delete_post(
     
     return result
 
-# 게시물 목록 조회 - JOIN 사용
+# 게시물 목록 조회 
 @router.get("/", response_model=List[PostWithUsername])
 def get_posts(db: Session = Depends(get_db)):
-    # Post와 User 테이블을 JOIN하여 한 번에 조회
     stmt = select(
         Post, 
         User.username
     ).join(
         User, 
         Post.user_id == User.id
-    ).order_by(Post.created_at.desc())  # 최신 게시물이 먼저 나오도록 정렬
+    ).order_by(Post.created_at.desc())  
     
     results = db.execute(stmt).all()
     if not results:
         raise HTTPException(status_code=404, detail="게시물이 없습니다")
     
-    # 결과 가공
     posts = []
     for row in results:
         post_dict = row[0].__dict__.copy()
@@ -107,10 +103,9 @@ def get_posts(db: Session = Depends(get_db)):
     
     return posts
 
-# 게시물 상세 조회 - JOIN 사용
+# 게시물 상세 조회 
 @router.get("/Read/{post_id}", response_model=PostWithUsername)
-def read_post(post_id: int, db: Session = Depends(get_db)):
-    # Post와 User 테이블을 JOIN하여 한 번에 조회
+def read_post(post_id: str, db: Session = Depends(get_db)):
     stmt = select(
         Post, 
         User.username
@@ -118,20 +113,18 @@ def read_post(post_id: int, db: Session = Depends(get_db)):
         User, 
         Post.user_id == User.id
     ).where(
-        Post.id == post_id
+        Post.id == int(post_id)
     )
     
     result = db.execute(stmt).first()
     if result is None:
         raise HTTPException(status_code=404, detail="게시물을 찾을 수 없습니다")
-    
-    # 조회수 증가
+
     post = result[0]
     post.view_count += 1
     db.commit()
     db.refresh(post)
     
-    # 결과 가공
     post_dict = post.__dict__.copy()
     post_dict["username"] = result[1]
     
@@ -143,7 +136,6 @@ def get_my_posts(
     db: Session = Depends(get_db),
     current_user: User = Depends(security.get_current_user)
 ):
-    # 현재 사용자의 게시물 조회
     stmt = select(
         Post, 
         User.username
@@ -158,7 +150,6 @@ def get_my_posts(
     if not results:
         raise HTTPException(status_code=404, detail="게시물이 없습니다")
     
-    # 결과 가공
     posts = []
     for row in results:
         post_dict = row[0].__dict__.copy()
