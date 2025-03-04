@@ -45,14 +45,9 @@ const Button = styled.button`
   border-radius: 4px;   
   font-size: 16px;   
   cursor: pointer;      
-  ${props => props.primary ? `     
-    background-color: black;     
-    color: white;   
-  ` : `     
-    background-color: white;     
-    color: black;     
-    border: 1px solid black;   
-  `} 
+  background-color: ${props => props.primary ? 'black' : 'white'};     
+  color: ${props => props.primary ? 'white' : 'black'};
+  border: ${props => props.primary ? 'none' : '1px solid black'};
 `;  
 
 const EditPost = () => {   
