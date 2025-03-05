@@ -67,6 +67,22 @@ const ButtonGroup = styled.div`
   justify-content: flex-end;
 `;
 
+const Button1 = styled.button`
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  
+  ${props => props.primary ? `
+    background-color: black;
+    color: white;
+  ` : `
+    background-color: white;
+    color: black;
+    border: 1px solid black;
+  `}
+`;
+
 const MyPost = () => {
   const [myPosts, setMyPosts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -188,7 +204,7 @@ const MyPost = () => {
         </Table>
       )}
        <ButtonGroup>
-        <Button onClick={handleGoBack}>목록</Button>
+        <Button1 onClick={handleGoBack}>목록</Button1>
       </ButtonGroup>
     </Container>
   );
