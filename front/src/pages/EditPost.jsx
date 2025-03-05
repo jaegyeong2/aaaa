@@ -118,8 +118,7 @@ const EditPost = () => {
       />       
       <ButtonGroup>         
         <Button onClick={() => navigate(`/myposts`)}>취소</Button>         
-        <Button primary={true} onClick={handleSubmit} disabled={isLoading}>
-          {isLoading ? '수정 중...' : '수정'}
+        <Button primary onClick={handleSubmit}>
         </Button>       
       </ButtonGroup>     
     </Container>   
