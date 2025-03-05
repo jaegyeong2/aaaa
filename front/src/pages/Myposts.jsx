@@ -62,7 +62,7 @@ const Button = styled.button`
 const ButtonGroup = styled.div`
   display: flex;
   justify-content: flex-end;
-  margin-top: 20px; /* Add top margin for spacing */
+  margin-bottom: 20px;
 `;
 
 const EditButton = styled(Button)`
@@ -195,7 +195,6 @@ const MyPost = () => {
           </tbody>
         </Table>
       )}
-
       <ButtonGroup>
         <Button onClick={handleGoBack}>목록</Button>
       </ButtonGroup>
