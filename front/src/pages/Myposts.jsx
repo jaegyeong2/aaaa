@@ -61,6 +61,12 @@ const DeleteButton = styled(Button)`
   color: white;
 `;
 
+const ButtonGroup = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+`;
+
 const MyPost = () => {
   const [myPosts, setMyPosts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -127,6 +133,10 @@ const MyPost = () => {
     navigate(`/post/${postId}`);
   };
 
+  const handleGoBack = () => {
+    navigate("/board");
+  };
+
   useEffect(() => {
     fetchMyPosts();
   }, []);
@@ -136,6 +146,10 @@ const MyPost = () => {
       <Header>
         <Title>내 게시물</Title>
       </Header>
+      
+      <ButtonGroup>
+        <Button onClick={handleGoBack}>목록</Button>
+      </ButtonGroup>
       
       {loading ? (
         <div>게시물을 불러오는 중...</div>
