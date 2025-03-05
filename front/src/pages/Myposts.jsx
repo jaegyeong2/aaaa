@@ -65,7 +65,7 @@ const ButtonGroup = styled.div`
   display: flex;
   gap: 10px;
   justify-content: flex-end;
-  top-margin: 10px;
+  margin-top: 20px
 `;
 
 const Button1 = styled.button`
