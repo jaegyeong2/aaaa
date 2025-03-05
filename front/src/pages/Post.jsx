@@ -98,8 +98,8 @@ const Post = () => {
         onChange={(e) => setContent(e.target.value)}
       />
       <ButtonGroup>
+        <Button onClick={handleSubmit}>등록</Button>
         <Button onClick={() => navigate('/board')}>취소</Button>
-        <Button primary onClick={handleSubmit}>등록</Button>
       </ButtonGroup>
     </Container>
   );
