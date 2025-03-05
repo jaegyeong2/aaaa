@@ -100,10 +100,6 @@ const MyPost = () => {
     }
   };
 
-  const handleEdit = (postId) => {
-    navigate(`/edit/${postId}`);
-  };
-
   const handleDelete = async (postId) => {
     if (!window.confirm("정말 삭제하시겠습니까?")) return;
 
@@ -162,7 +158,7 @@ const MyPost = () => {
                   </Td>
                   <Td>{new Date(post.created_at).toLocaleDateString()}</Td>
                   <Td>
-                    <EditButton onClick={() => handleEdit(post.id)}>수정</EditButton>
+                    <EditButton onClick={() => navigate(`/editpost/${postId}`)}>수정</EditButton>
                     <DeleteButton onClick={() => handleDelete(post.id)}>삭제</DeleteButton>
                   </Td>
                 </PostRow>
