@@ -44,25 +44,11 @@ const PostRow = styled.tr`
 `;
 
 const Button = styled.button`
-  padding: 10px 20px;
-  border-radius: 4px;
-  font-size: 16px;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 5px;
   cursor: pointer;
-  
-  ${props => props.primary ? `
-    background-color: black;
-    color: white;
-  ` : `
-    background-color: white;
-    color: black;
-    border: 1px solid black;
-  `}
-`;
-
-const ButtonGroup = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 20px;
+  margin-left: 5px;
 `;
 
 const EditButton = styled(Button)`
@@ -141,10 +127,6 @@ const MyPost = () => {
     navigate(`/post/${postId}`);
   };
 
-  const handleGoBack = () => {
-    navigate("/board");
-  };
-
   useEffect(() => {
     fetchMyPosts();
   }, []);
@@ -195,9 +177,6 @@ const MyPost = () => {
           </tbody>
         </Table>
       )}
-      <ButtonGroup>
-        <Button onClick={handleGoBack}>목록</Button>
-      </ButtonGroup>
     </Container>
   );
 };
