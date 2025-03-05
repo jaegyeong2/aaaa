@@ -81,6 +81,7 @@ const EditPost = () => {
   };    
 
   const handleSubmit = async () => {
+    console.log("handleSubmit 실행됨");
     try {
       const response = await axios.put(
         `http://15.165.159.148:8000/posts/Update/${postId}`, 
@@ -88,7 +89,8 @@ const EditPost = () => {
         { headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('access_token')}` } }
       );
   
-      console.log('Update response:', response.data);
+      const userId = JSON.parse(atob(token.split('.')[1])).sub;
+      console.log("userId:", userId); // userId 확인
       alert('게시글 수정 성공');
       navigate(`/postview/${postId}`);
     } catch (error) {
