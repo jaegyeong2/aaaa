@@ -44,11 +44,25 @@ const PostRow = styled.tr`
 `;
 
 const Button = styled.button`
-  padding: 6px 12px;
-  border: none;
-  border-radius: 5px;
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-size: 16px;
   cursor: pointer;
-  margin-left: 5px;
+  
+  ${props => props.primary ? `
+    background-color: black;
+    color: white;
+  ` : `
+    background-color: white;
+    color: black;
+    border: 1px solid black;
+  `}
+`;
+
+const ButtonGroup = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
 `;
 
 const EditButton = styled(Button)`
@@ -59,12 +73,6 @@ const EditButton = styled(Button)`
 const DeleteButton = styled(Button)`
   background-color: #dc3545;
   color: white;
-`;
-
-const ButtonGroup = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 20px;
 `;
 
 const MyPost = () => {
@@ -143,13 +151,12 @@ const MyPost = () => {
 
   return (
     <Container>
-      <Header>
-        <Title>내 게시물</Title>
-      </Header>
-      
       <ButtonGroup>
         <Button onClick={handleGoBack}>목록</Button>
       </ButtonGroup>
+      <Header>
+        <Title>내 게시물</Title>
+      </Header>
       
       {loading ? (
         <div>게시물을 불러오는 중...</div>
