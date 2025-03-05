@@ -101,7 +101,7 @@ const MyPost = () => {
   };
 
   const handleEdit = (postId) => {
-    navigate(`/Post?edit=${postId}`);
+    navigate(`/edit/${postId}`);
   };
 
   const handleDelete = async (postId) => {
