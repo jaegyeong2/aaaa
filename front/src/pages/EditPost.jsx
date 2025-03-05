@@ -56,6 +56,7 @@ const EditPost = () => {
   const [content, setContent] = useState("");   
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();    
+  console.log("postId 확인:", postId);
 
   useEffect(() => {     
     fetchPost();   

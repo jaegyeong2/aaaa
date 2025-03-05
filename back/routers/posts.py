@@ -4,7 +4,6 @@ from typing import List
 from database import get_db
 import schema
 import security
-from schema import PostCreate
 from model import Post, User
 from sqlalchemy import select
 
@@ -35,22 +34,29 @@ def create_post(
 
 # 게시물 수정
 @router.put("/Update/{post_id}", response_model=PostWithUsername)
-def update_post(post_id: int, post_data: PostCreate, db: Session = Depends(get_db)):
-    print(f"🔍 수정 요청 받은 post_id: {post_id}")  # 로그 추가
-    post = db.query(Post).filter(Post.id == post_id).first()
+def update_post(
+    post_id: int,
+    post_update: schema.PostCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(security.get_current_user)
+):
+    db_post = db.query(Post).filter(Post.id == post_id).first()
+    if db_post is None:
+        raise HTTPException(status_code=404, detail="게시물을 찾을 수 없습니다")
     
-    if not post:
-        print("❌ 기존 게시글을 찾을 수 없음!")  # 로그 추가
-        raise HTTPException(status_code=404, detail="Post not found")
-
-    print(f"✅ 기존 게시글 수정: {post.id}, {post.title}")  # 로그 추가
-    post.title = post_data.title
-    post.content = post_data.content
+    if db_post.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="게시물을 수정할 권한이 없습니다")
+    
+    db_post.title = post_update.title
+    db_post.content = post_update.content
+    
     db.commit()
-    db.refresh(post)
-
-    print("✔ 게시글이 정상적으로 수정됨!")  # 로그 추가
-    return post
+    db.refresh(db_post)
+    
+    result = db_post.__dict__.copy()
+    result["username"] = current_user.username
+    
+    return result
 
 # 게시물 삭제
 @router.delete("/Delete", response_model=PostWithUsername)
