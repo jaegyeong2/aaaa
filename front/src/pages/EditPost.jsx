@@ -45,9 +45,14 @@ const Button = styled.button`
   border-radius: 4px;   
   font-size: 16px;   
   cursor: pointer;      
-  background-color: ${props => props.primary ? 'black' : 'white'};
-  color: ${props => props.primary ? 'white' : 'black'};
-  border: ${props => props.primary ? 'none' : '1px solid black'};
+  ${props => props.primary ? `     
+    background-color: black;     
+    color: white;   
+  ` : `     
+    background-color: white;     
+    color: black;     
+    border: 1px solid black;   
+  `} 
 `;  
 
 const EditPost = () => {   
@@ -80,28 +85,51 @@ const EditPost = () => {
     }
   };    
 
-  const handleSubmit1 = async () => {
-    try {
-      await axios.put(
-        `http://15.165.159.148:8000/posts/Update/${postId}`,  
-        { title, content }, 
-        { headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('access_token')}` } }
-      );
-  
-      alert('게시글 수정 성공');
-      navigate(`/postview/${postId}`);
-    } catch (error) {
-      console.error('Update error:', error.response?.data || error.message);
-      
-      if (error.response?.status === 403) {
-        alert('게시글을 수정할 권한이 없습니다.');
-      } else {
-        alert('게시글 수정에 실패했습니다.');
-      }
+  const handleSubmit = async () => {     
+    // 제목과 내용 유효성 검사 추가
+    if (!title.trim()) {
+      alert('제목을 입력해주세요.');
+      return;
     }
+
+    if (!content.trim()) {
+      alert('내용을 입력해주세요.');
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      await axios.put("http://15.165.159.148:8000/posts/Update", {         
+        title,         
+        content       
+      }, {
+        params: { post_id: postId },
+        headers: {           
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`         
+        }       
+      });              
+      alert('게시글 수정 성공');       
+      navigate(`/postview/${postId}`);     
+    } catch (error) {       
+      console.error(error);       
+      if (error.response?.status === 403) {         
+        alert('게시글을 수정할 권한이 없습니다.');       
+      } else {         
+        alert('게시글 수정에 실패했습니다.');       
+      }     
+    } finally {
+      setIsLoading(false);
+    }
+  };    
+
+  const handleGoBack = () => {
+    navigate('/board');
   };
-  
-  
+
+  // 로딩 중일 때 UI
+  if (isLoading) {
+    return <Container>로딩 중...</Container>;
+  }
 
   return (     
     <Container>       
@@ -116,9 +144,11 @@ const EditPost = () => {
         value={content}         
         onChange={(e) => setContent(e.target.value)}       
       />       
-      <ButtonGroup>         
-        <Button onClick={() => navigate(`/myposts`)}>취소</Button>         
-        <Button onClick={handleSubmit1}>
+      <ButtonGroup>
+        <Button onClick={handleGoBack}>목록</Button>
+        <Button onClick={() => navigate(`/postview/${postId}`)}>취소</Button>
+        <Button primary onClick={handleSubmit} disabled={isLoading}>
+          {isLoading ? '수정 중...' : '수정'}
         </Button>       
       </ButtonGroup>     
     </Container>   
