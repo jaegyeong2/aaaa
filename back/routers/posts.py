@@ -35,12 +35,12 @@ def create_post(
 # 게시물 수정
 @router.put("/Update/{post_id}", response_model=PostWithUsername)
 def update_post(
-    post_id: int,
+    post_id: str,
     post_update: schema.PostCreate,
     db: Session = Depends(get_db),
     current_user: User = Depends(security.get_current_user)
 ):
-    db_post = db.query(Post).filter(Post.id == post_id).first()
+    db_post = db.query(Post).filter(Post.id == int(post_id)).first()
     if db_post is None:
         raise HTTPException(status_code=404, detail="게시물을 찾을 수 없습니다")
     

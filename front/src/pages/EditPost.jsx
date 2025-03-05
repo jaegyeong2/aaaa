@@ -56,7 +56,6 @@ const EditPost = () => {
   const [content, setContent] = useState("");   
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();    
-  console.log("postId 확인:", postId);
 
   useEffect(() => {     
     fetchPost();   
@@ -85,29 +84,16 @@ const EditPost = () => {
     try {
       const response = await axios.put(
         `http://15.165.159.148:8000/posts/Update/${postId}`, 
-        {
-          title,
-          content
-        }, 
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('access_token')}`
-          }
-        }
+        { title, content }, 
+        { headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('access_token')}` } }
       );
-      
+  
       console.log('Update response:', response.data);
-      
       alert('게시글 수정 성공');
       navigate(`/postview/${postId}`);
     } catch (error) {
-      console.error('Update error:', {
-        response: error.response?.data,
-        status: error.response?.status,
-        error: error.message
-      });
-      
+      console.error('Update error:', error.response?.data || error.message);
+  
       if (error.response?.status === 403) {
         alert('게시글을 수정할 권한이 없습니다.');
       } else {
@@ -115,6 +101,7 @@ const EditPost = () => {
       }
     }
   };
+  
 
   return (     
     <Container>       
