@@ -89,7 +89,6 @@ const EditPost = () => {
           content
         }, 
         {
-          params: { post_id: postId },
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${localStorage.getItem('access_token')}`
