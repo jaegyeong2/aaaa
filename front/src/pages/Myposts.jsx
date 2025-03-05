@@ -62,7 +62,7 @@ const Button = styled.button`
 const ButtonGroup = styled.div`
   display: flex;
   justify-content: flex-end;
-  margin-bottom: 20px;
+  margin-top: 20px; /* Add top margin for spacing */
 `;
 
 const EditButton = styled(Button)`
@@ -151,9 +151,6 @@ const MyPost = () => {
 
   return (
     <Container>
-      <ButtonGroup>
-        <Button onClick={handleGoBack}>목록</Button>
-      </ButtonGroup>
       <Header>
         <Title>내 게시물</Title>
       </Header>
@@ -198,6 +195,10 @@ const MyPost = () => {
           </tbody>
         </Table>
       )}
+
+      <ButtonGroup>
+        <Button onClick={handleGoBack}>목록</Button>
+      </ButtonGroup>
     </Container>
   );
 };
