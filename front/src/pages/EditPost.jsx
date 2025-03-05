@@ -83,7 +83,7 @@ const EditPost = () => {
   const handleSubmit = async () => {
     try {
       const response = await axios.put(
-        `http://15.165.159.148:8000/posts/Update`, 
+        `http://15.165.159.148:8000/posts/Update/${postId}`, 
         {
           title,
           content
