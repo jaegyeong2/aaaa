@@ -80,22 +80,19 @@ const EditPost = () => {
     }
   };    
 
-  const handleSubmit = async () => {
-    console.log("handleSubmit 실행됨");
+  const handleSubmit1 = async () => {
     try {
-      const response = await axios.put(
-        `http://15.165.159.148:8000/posts/Update/${postId}`, 
+      await axios.put(
+        `http://15.165.159.148:8000/posts/Update/${postId}`,  
         { title, content }, 
         { headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('access_token')}` } }
       );
   
-      const userId = JSON.parse(atob(token.split('.')[1])).sub;
-      console.log("userId:", userId); // userId 확인
       alert('게시글 수정 성공');
       navigate(`/postview/${postId}`);
     } catch (error) {
       console.error('Update error:', error.response?.data || error.message);
-  
+      
       if (error.response?.status === 403) {
         alert('게시글을 수정할 권한이 없습니다.');
       } else {
@@ -103,6 +100,7 @@ const EditPost = () => {
       }
     }
   };
+  
   
 
   return (     
@@ -120,7 +118,7 @@ const EditPost = () => {
       />       
       <ButtonGroup>         
         <Button onClick={() => navigate(`/myposts`)}>취소</Button>         
-        <Button onClick={handleSubmit}>
+        <Button onClick={handleSubmit1}>
         </Button>       
       </ButtonGroup>     
     </Container>   
