@@ -50,6 +50,7 @@ const Button = styled.button`
   border: ${props => props.primary ? 'none' : '1px solid black'};
 `;  
 
+
 const EditPost = () => {   
   const { postId } = useParams();   
   const [title, setTitle] = useState("");   

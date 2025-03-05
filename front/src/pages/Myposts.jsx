@@ -61,6 +61,12 @@ const DeleteButton = styled(Button)`
   color: white;
 `;
 
+const ButtonGroup = styled.div`
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+`;
+
 const MyPost = () => {
   const [myPosts, setMyPosts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -127,6 +133,10 @@ const MyPost = () => {
     navigate(`/post/${postId}`);
   };
 
+  const handleGoBack = () => {
+    navigate("/board");
+  };
+
   useEffect(() => {
     fetchMyPosts();
   }, []);
@@ -177,6 +187,9 @@ const MyPost = () => {
           </tbody>
         </Table>
       )}
+       <ButtonGroup>
+        <Button onClick={handleGoBack}>목록</Button>
+      </ButtonGroup>
     </Container>
   );
 };
