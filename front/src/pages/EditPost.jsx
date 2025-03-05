@@ -120,7 +120,7 @@ const EditPost = () => {
       />       
       <ButtonGroup>         
         <Button onClick={() => navigate(`/myposts`)}>취소</Button>         
-        <Button primary onClick={handleSubmit}>
+        <Button onClick={handleSubmit}>
         </Button>       
       </ButtonGroup>     
     </Container>   
